@@ -1,30 +1,31 @@
-name: 打包桌面版（exe + mac）
-on:
-  workflow_dispatch:        # 在 GitHub 的 Actions 页面手动点「Run workflow」
-  push:
-    tags: [ 'v*' ]
+name: build-desktop
+
+on: [push, workflow_dispatch]
+
 jobs:
   build:
     strategy:
       fail-fast: false
       matrix:
-        os: [ windows-latest, macos-latest ]
+        os: [windows-latest, macos-latest]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
-        with: { node-version: 20 }
+        with:
+          node-version: 20
       - run: npm install
-      - name: 打包 Windows
+      - name: Build Windows
         if: runner.os == 'Windows'
         run: npm run dist:win
-      - name: 打包 Mac
+      - name: Build Mac
         if: runner.os == 'macOS'
         run: npm run dist:mac
-        env: { CSC_IDENTITY_AUTO_DISCOVERY: 'false' }
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
       - uses: actions/upload-artifact@v4
         with:
-          name: 歌谱投屏-${{ runner.os }}
+          name: app-${{ runner.os }}
           path: |
             dist/*.exe
             dist/*.dmg
