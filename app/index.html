@@ -4995,7 +4995,7 @@ document.addEventListener('keydown', e=>{
 }, true);
 window.addEventListener('resize', placeGuide);
 ['wheel','touchmove'].forEach(ev=>$('guide').addEventListener(ev, e=>{ if (!e.target.closest('.gd-card')) e.preventDefault(); }, { passive:false }));
-if (GUIDE_FIRST && !IS_RECV) setTimeout(startGuide, 900);
+if (GUIDE_FIRST && !IS_RECV && !new URLSearchParams(location.search).has('lyric')) setTimeout(startGuide, 900);
 
 /* 下次打开自动进入歌词投屏：浏览器要求弹出窗口由点击触发，先尝试直接开，被拦截就等你点一下页面任意位置 */
 (function(){
@@ -5019,6 +5019,9 @@ if (GUIDE_FIRST && !IS_RECV) setTimeout(startGuide, 900);
     bar.hidden = false; evs.forEach(ev=>document.addEventListener(ev, onTap, true));
   }, 800);
 })();
+
+/* 网址带 ?lyric=1：打开页面就直接进入歌词投屏（桌面版启动用；网页版也可以把带这个参数的网址加书签） */
+if (!IS_RECV && !IS_STAGE && new URLSearchParams(location.search).has('lyric')) setTimeout(()=>{ try{ presOpen(); }catch(e){ console.error(e); } }, 0);
 
 if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) navigator.serviceWorker.register('sw.js').catch(()=>{});
 (async ()=>{
