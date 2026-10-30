@@ -44,7 +44,7 @@ function createWindow(){
   hookWindowOpen(main.webContents);
   app.on('web-contents-created', (_e, wc)=>{ if (wc !== main.webContents) hookWindowOpen(wc); });
   main.on('closed', ()=>{ main = null; app.quit(); });
-  main.loadURL(ORIGIN + '/');
+  main.loadURL(ORIGIN + '/?lyric=1');   // 启动后直接进入「歌词投屏」界面
 }
 
 app.whenReady().then(async ()=>{
