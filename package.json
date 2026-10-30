@@ -1,0 +1,27 @@
+{
+  "name": "gepu-touping",
+  "productName": "歌谱投屏",
+  "version": "1.0.0",
+  "description": "专属歌谱搜索 · 歌词投屏 桌面版",
+  "main": "main.js",
+  "author": "gepu",
+  "license": "UNLICENSED",
+  "scripts": {
+    "start": "electron .",
+    "dist:win": "electron-builder --win --publish never",
+    "dist:mac": "electron-builder --mac --publish never"
+  },
+  "dependencies": { "crypto-js": "4.2.0" },
+  "devDependencies": { "electron": "^33.2.0", "electron-builder": "^25.1.8" },
+  "build": {
+    "appId": "com.church.gepu-touping",
+    "productName": "歌谱投屏",
+    "directories": { "output": "dist" },
+    "files": [ "main.js", "server.js", "app/**/*" ],
+    "win": { "icon": "build/icon.png", "target": [ { "target": "portable", "arch": ["x64"] }, { "target": "nsis", "arch": ["x64"] } ] },
+    "portable": { "artifactName": "歌谱投屏-免安装版-${version}.${ext}" },
+    "nsis": { "oneClick": false, "allowToChangeInstallationDirectory": true, "perMachine": false, "artifactName": "歌谱投屏-安装版-${version}.${ext}" },
+    "mac": { "icon": "build/icon.png", "category": "public.app-category.music", "target": [ { "target": "dmg", "arch": ["universal"] } ], "artifactName": "歌谱投屏-${version}-mac.${ext}", "identity": null },
+    "dmg": { "title": "歌谱投屏 ${version}" }
+  }
+}
