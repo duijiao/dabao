@@ -601,6 +601,50 @@ html.recv body>*:not(#recv):not(script){display:none!important}
   .pr-tabs.dsk{display:flex}
   .pr-pane{flex:1;min-height:0;overflow:auto}
 }
+
+/* ===== 歌词投屏：顶部菜单栏 + 下拉设置面板（取代右下角的小设置区） ===== */
+.pr-menus{display:flex;gap:2px;align-items:center;margin-left:6px;padding-left:10px;border-left:1px solid #3a3e46}
+.pr-menus button{background:transparent;border-color:transparent;color:#cbd5e1;padding:6px 12px;font-size:13.5px}
+.pr-menus button::after{content:"▾";margin-left:5px;font-size:10px;opacity:.7}
+.pr-menus button:hover{background:#2c2f35}
+.pr-menus button.on{background:#2c2f35;color:#fff;border-color:#3a3e46}
+.pr-pop{position:absolute;z-index:20;top:48px;left:8px;width:460px;max-width:calc(100vw - 16px);background:#1f2125;border:1px solid #3a3e46;border-radius:10px;box-shadow:0 18px 48px #000c;display:flex;flex-direction:column;overflow:hidden}
+.pr-pop[hidden]{display:none}
+.pr-pop.wide{width:540px}
+.pr-pop-h{display:flex;align-items:center;gap:8px;flex:none;padding:8px 8px 8px 14px;border-bottom:1px solid #2f3238;font-weight:700;font-size:14px}
+.pr-pop-h span{flex:1}
+.pr-pop-h button{padding:3px 12px}
+.pr-pop .pr-pane{flex:1;min-height:0;overflow:auto;padding:12px 14px 14px}
+.pr-pop .pr-form{grid-template-columns:104px 1fr;gap:10px 12px}
+.pr-pop .pr-form input[type=range]{width:100%}
+.pr-pop .pr-form input[type=checkbox]{justify-self:start;width:18px;height:18px;margin:0}
+.pr-pop .pr-form input[type=color]{justify-self:start}
+.pr-pop .pr-sec{margin:16px 0 8px;padding-bottom:4px;border-bottom:1px solid #2a2d33;color:#9aa4b4}
+.pr-val{float:right;color:#8ea0bd;font-variant-numeric:tabular-nums;font-weight:400}
+.pr-pop .pr-stk{position:sticky;top:0;z-index:3;width:62%;margin:0 auto 10px;box-shadow:0 0 0 12px #1f2125}
+@media (max-width:899px){
+  .pr-menus{order:9;width:100%;margin:0;padding:4px 0 0;border-left:0;overflow-x:auto}
+  .pr-pop,.pr-pop.wide{left:8px!important;width:calc(100vw - 16px)}
+  .pr-pop .pr-stk{width:80%}
+}
+@media (min-width:900px){
+  .pr-left{grid-row:1/3}
+}
+/* 「投屏中 / 点击开始」提示条：放到顶部中间，不再挡住右下角 */
+.cast-pill{top:max(10px,env(safe-area-inset-top));bottom:auto;right:auto;left:50%;transform:translateX(-50%);white-space:nowrap}
+/* 圣经投屏 */
+.lv-ref{position:absolute;left:5%;right:5%;display:none;align-items:center;justify-content:center;white-space:nowrap;overflow:hidden;line-height:1.25;transition:opacity .15s}
+.bb-row{display:flex;gap:6px;align-items:center;margin-bottom:8px}
+.bb-row input,.bb-row select{flex:1;min-width:0}
+.bb-row button{flex:none}
+.bb-list{max-height:42vh;min-height:120px;overflow:auto;border:1px solid #34373d;border-radius:8px;background:#101114}
+.bb-v{display:flex;gap:8px;padding:6px 9px;cursor:pointer;font-size:13.5px;line-height:1.55;border-bottom:1px solid #1d1f24;color:#dfe3ea;user-select:none;-webkit-user-select:none}
+.bb-v b{flex:none;min-width:2.1em;color:#8ea0bd;font-weight:700;text-align:right}
+.bb-v.s b{min-width:4.8em;text-align:left}
+.bb-v:hover{background:#23252a}
+.bb-v.on{background:#1d2a44}
+.bb-v mark{background:#b45309;color:#fff;border-radius:3px;padding:0 1px}
+.bb-err{color:#fbbf24!important}
 </style>
 <script>var IDLE_SVG='<svg class="idle-ico" viewBox="0 0 48 48" fill="none" aria-hidden="true"><rect x="4" y="4" width="40" height="40" rx="11" fill="currentColor" opacity=".12"/><path d="M19 32V15l13-3v17" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="16" cy="33" r="4" fill="currentColor"/><circle cx="29" cy="30" r="4" fill="currentColor"/></svg>';
 function ssFallback(img){ img.onerror=null; img.outerHTML=IDLE_SVG; }   // ss.png 不存在时换成内置图标
@@ -867,7 +911,7 @@ function ssFallback(img){ img.onerror=null; img.outerHTML=IDLE_SVG; }   // ss.pn
   </div>
 </div>
 
-<div class="cast-pill" id="castAutoBar" hidden style="left:14px;right:auto;bottom:14px;z-index:140"><span id="castAutoTxt"></span><button type="button" id="castAutoNo" style="background:#475569">取消</button></div>
+<div class="cast-pill" id="castAutoBar" hidden style="top:64px;bottom:auto;left:50%;right:auto;z-index:140"><span id="castAutoTxt"></span><button type="button" id="castAutoNo" style="background:#475569">取消</button></div>
 <div class="cast-pill" id="castPill" hidden><span>投屏中</span><button type="button" id="castPillStop">停止</button></div>
 <!-- 投屏接收端（仅 ?present=1 时显示） -->
 <div id="recv" class="nofs" hidden>
@@ -947,6 +991,7 @@ function ssFallback(img){ img.onerror=null; img.outerHTML=IDLE_SVG; }   // ss.pn
 <div class="pres" id="pres" hidden>
   <div class="pr-top">
     <strong>歌词投屏</strong>
+    <div class="pr-menus" id="prMenus"><button type="button" data-m="style">文字样式</button><button type="button" data-m="screens">输出屏幕</button><button type="button" data-m="stage">舞台屏设置</button></div>
     <span class="pr-chip" id="prChip">未输出</span>
     <div class="pr-acts">
       <button type="button" class="pri" id="prStart">开始输出</button>
@@ -979,15 +1024,12 @@ function ssFallback(img){ img.onerror=null; img.outerHTML=IDLE_SVG; }   // ss.pn
     <div class="pr-side">
       <div class="pr-tabs" id="prTabs">
         <button type="button" data-p="list" class="on">歌单</button>
-        <button type="button" data-p="libs">库</button>
+        <button type="button" data-p="libs">库</button><button type="button" data-p="bible">圣经</button>
         <button type="button" data-p="slides">幻灯片</button>
         <button type="button" data-p="bg">背景</button>
-        <button type="button" data-p="style">文字样式</button>
-        <button type="button" data-p="screens">输出屏幕</button>
-        <button type="button" data-p="stage">舞台屏设置</button>
       </div>
       <div class="pr-ph">资料</div>
-      <div class="pr-tabs dsk" id="prTabsL"><button type="button" data-p="list" class="on">歌单</button><button type="button" data-p="libs">库</button></div>
+      <div class="pr-tabs dsk" id="prTabsL"><button type="button" data-p="list" class="on">歌单</button><button type="button" data-p="libs">库</button><button type="button" data-p="bible">圣经</button></div>
 <div class="pr-pane" data-pane="list">
         <div class="pr-set" id="prSet"></div>
         <div class="pr-acts" style="margin-top:10px"><button type="button" class="pri" id="prAddLib">＋ 从诗歌库添加</button><button type="button" id="prAddMan">＋ 手动输入歌词</button><button type="button" id="prAddPpt">＋ 导入 PPT</button><button type="button" id="prAddPro">＋ 导入 ProPresenter</button><button type="button" id="prMakePpt">＋ 自己做 PPT</button><input type="file" id="prPptFile" accept=".pptx,application/vnd.openxmlformats-officedocument.presentationml.presentation" multiple hidden><input type="file" id="prProFile" accept=".proBundle,.probundle,.pro" multiple hidden></div>
@@ -1000,6 +1042,25 @@ function ssFallback(img){ img.onerror=null; img.outerHTML=IDLE_SVG; }   // ss.pn
         <div class="pr-set" id="libItems"></div>
         <div class="pr-acts" style="margin-top:10px"><button type="button" class="pri" id="libAddSong">＋ 从诗歌库添加</button><button type="button" id="libAddMan">＋ 手动输入歌词</button><button type="button" id="libAddPpt">＋ 导入 PPT</button><button type="button" id="libAddPro">＋ 导入 ProPresenter</button><button type="button" id="libAll">整库加入歌单</button></div>
         <div class="hint" style="margin-top:8px;color:#8ea0bd">库像 ProPresenter 的资料库：一个库里可放多份歌词和 PPT，需要时点「＋歌单」或「▶ 放映」调入歌单。歌单里每一项也有「存库」按钮，可存进当前库长期保存（保存在本机浏览器）。</div>
+      </div>
+
+<div class="pr-pane" data-pane="bible" hidden>
+        <div class="hint bb-msg" id="bbMsg" style="color:#8ea0bd;margin-bottom:8px">点开本页时会自动读取圣经。</div>
+        <div class="bb-row"><input id="bbRef" placeholder="经文，如 约3:16 或 创1:1-5，回车投出" autocomplete="off" spellcheck="false"><button type="button" class="pri" id="bbGo">投出</button></div>
+        <div class="bb-row"><select id="bbBook" style="flex:1.7"></select><select id="bbCh" style="flex:1"></select></div>
+        <div class="bb-row"><input id="bbQ" placeholder="搜索经文里的字词（空格分隔多个词）" autocomplete="off" spellcheck="false"></div>
+        <div class="bb-list" id="bbList"></div>
+        <div class="hint" style="margin:4px 0 8px;color:#8ea0bd">点一节选中，Shift 点另一节连选，双击直接投出。不选节则整章。</div>
+        <div class="pr-acts"><button type="button" class="pri" id="bbLive">▶ 投出所选</button><button type="button" id="bbAdd">＋ 加入歌单</button></div>
+        <div class="pr-sec">显示设置</div>
+        <div class="pr-form" style="grid-template-columns:86px 1fr">
+          <label>每屏节数</label><select id="bbPer"><option value="1">1 节</option><option value="2">2 节</option><option value="3">3 节</option><option value="4">4 节</option><option value="0">整段一屏</option></select>
+          <label>显示节号</label><input type="checkbox" id="bbNums" style="width:auto">
+          <label>出处位置</label><select id="bbRefPos"><option value="bottom">下方</option><option value="top">上方</option><option value="none">不显示</option></select>
+          <label>出处字号</label><input type="range" id="bbRefSize" min="2" max="12" value="5">
+        </div>
+        <div class="hint" style="margin-top:8px;color:#8ea0bd">节号只在一屏多节时显示。字体、颜色、背景沿用「文字样式」和「背景」里的设置。</div>
+        <div class="pr-acts" style="margin-top:12px"><button type="button" id="bbPick">选择圣经文件…</button><input type="file" id="bbFile" accept=".txt,text/plain" hidden></div>
       </div>
     </div>
     <div class="pr-center">
@@ -1033,9 +1094,10 @@ function ssFallback(img){ img.onerror=null; img.outerHTML=IDLE_SVG; }   // ss.pn
         </div>
       </div>
     </div>
-    <div class="pr-rset">
-      <div class="pr-tabs dsk" id="prTabsR"><button type="button" data-p="style" class="on">文字样式</button><button type="button" data-p="screens">输出屏幕</button><button type="button" data-p="stage">舞台屏设置</button></div>
-<div class="pr-pane" data-pane="style" hidden>
+  </div>
+  <div class="pr-pop" id="prPop" hidden>
+    <div class="pr-pop-h"><span id="prPopT"></span><button type="button" id="prPopX">关闭</button></div>
+<div class="pr-pane" data-pane="style" data-menu hidden>
         <div class="pr-form">
           <label>每屏行数</label><select id="prLines"><option value="1">1 行</option><option value="2">2 行</option><option value="3">3 行</option><option value="4">4 行</option><option value="0">整段一屏</option></select>
           <label>字体</label><select id="prFam"><option value="sans">黑体</option><option value="serif">宋体</option><option value="kai">楷体</option></select>
@@ -1048,7 +1110,8 @@ function ssFallback(img){ img.onerror=null; img.outerHTML=IDLE_SVG; }   // ss.pn
         </div>
         <div class="hint" style="margin-top:10px;color:#8ea0bd">字号会自动缩小以放下整段文字，「字号上限」是文字最大不超过屏幕高度的百分比。</div>
       </div>
-<div class="pr-pane" data-pane="screens" hidden>
+
+<div class="pr-pane" data-pane="screens" data-menu hidden>
         <div class="pr-form" style="grid-template-columns:80px 1fr">
           <label>观众屏</label><select id="prScr"><option value="">自动（优先外接屏）</option></select>
           <label>舞台屏</label><select id="prStScr"><option value="">自动（另一块外接屏）</option></select>
@@ -1058,29 +1121,38 @@ function ssFallback(img){ img.onerror=null; img.outerHTML=IDLE_SVG; }   // ss.pn
         <label style="display:flex;gap:8px;align-items:center;font-size:13.5px"><input type="checkbox" id="prAutoOn" style="width:auto">自动进入歌词投屏，并输出到上面选的观众屏</label>
         <label style="display:flex;gap:8px;align-items:center;font-size:13.5px;margin-top:6px"><input type="checkbox" id="prAutoStage" style="width:auto">同时把舞台屏打开到所选舞台屏</label>
         <div class="hint" id="prScrMsg" style="margin-top:10px;color:#8ea0bd">点「检测屏幕」读取这台电脑连接的所有屏幕（首次需允许浏览器的「窗口管理」权限）。</div>
-        <div class="hint" style="margin-top:8px;color:#8ea0bd">浏览器要求弹出窗口由点击触发：自动模式会先直接尝试，被拦截时左下角出现提示，点一下页面任意处即可。在站点设置里允许本站「弹出窗口」就不用点。观众屏和舞台屏请选不同的屏幕。</div>
+        <div class="hint" style="margin-top:8px;color:#8ea0bd">浏览器要求弹出窗口由点击触发：自动模式会先直接尝试，被拦截时页面顶部会出现提示条，点一下页面任意处即可。在站点设置里允许本站「弹出窗口」就不用点。观众屏和舞台屏请选不同的屏幕。</div>
       </div>
-<div class="pr-pane" data-pane="stage" hidden>
-        <div class="pr-prev" id="prStagePrev" style="margin-bottom:10px"></div>
-        <div class="pr-form">
-          <label>当前歌词字号</label><input type="range" id="stCurMax" min="6" max="32" value="20">
-          <label>当前歌词颜色</label><input type="color" id="stCurColor" value="#ffffff">
-          <label>当前歌词加粗</label><input type="checkbox" id="stCurBold" style="width:auto" checked>
-          <label>上区高度</label><input type="range" id="stSplit" min="30" max="80" value="58">
-          <label>上下间距</label><input type="range" id="stGap" min="0" max="20" value="3">
-          <label>下一页字号</label><input type="range" id="stNextMax" min="2" max="16" value="6">
-          <label>下一页颜色</label><input type="color" id="stNextColor" value="#b6c3d9">
-          <label>行距</label><input type="range" id="stLh" min="100" max="190" value="135">
-          <label>背景颜色</label><input type="color" id="stBg" value="#000000">
-          <label>对齐</label><select id="stAlign"><option value="center">居中</option><option value="left">居左</option></select>
-          <label>显示时钟</label><input type="checkbox" id="stClock" style="width:auto" checked>
-          <label>显示歌名页码</label><input type="checkbox" id="stTitle" style="width:auto" checked>
-          <label>显示「下一页」</label><input type="checkbox" id="stNextOn" style="width:auto" checked>
-        </div>
-        <div class="pr-acts" style="margin-top:10px"><button type="button" id="stReset">恢复默认</button></div>
-        <div class="hint" style="margin-top:8px;color:#8ea0bd">这里只影响舞台屏（敬拜团队看的屏），不影响观众屏。字号是上限，歌词太长会自动缩小。</div>
-      </div>
-    </div>
+<div class="pr-pane" data-pane="stage" data-menu hidden>
+  <div class="pr-prev pr-stk" id="prStagePrev"></div>
+  <div class="pr-sec" style="margin-top:0">当前歌词</div>
+  <div class="pr-form">
+    <label>字号</label><input type="range" id="stCurMax" min="6" max="32" value="20">
+    <label>颜色</label><input type="color" id="stCurColor" value="#ffffff">
+    <label>加粗</label><input type="checkbox" id="stCurBold" style="width:auto" checked>
+  </div>
+  <div class="pr-sec">「下一页」预览</div>
+  <div class="pr-form">
+    <label>显示下一页</label><input type="checkbox" id="stNextOn" style="width:auto" checked>
+    <label>字号</label><input type="range" id="stNextMax" min="2" max="16" value="6">
+    <label>颜色</label><input type="color" id="stNextColor" value="#b6c3d9">
+  </div>
+  <div class="pr-sec">版面</div>
+  <div class="pr-form">
+    <label>上区高度</label><input type="range" id="stSplit" min="30" max="80" value="58">
+    <label>上下间距</label><input type="range" id="stGap" min="0" max="20" value="3">
+    <label>行距</label><input type="range" id="stLh" min="100" max="190" value="135">
+    <label>对齐</label><select id="stAlign"><option value="center">居中</option><option value="left">居左</option></select>
+    <label>背景颜色</label><input type="color" id="stBg" value="#000000">
+  </div>
+  <div class="pr-sec">显示内容</div>
+  <div class="pr-form">
+    <label>时钟</label><input type="checkbox" id="stClock" style="width:auto" checked>
+    <label>歌名 / 页码</label><input type="checkbox" id="stTitle" style="width:auto" checked>
+  </div>
+  <div class="pr-acts" style="margin-top:12px"><button type="button" id="stReset">恢复默认</button></div>
+  <div class="hint" style="margin-top:8px;color:#8ea0bd">这里只影响舞台屏（敬拜团队看的屏），不影响观众屏。字号是上限，歌词太长会自动缩小。上面的预览会随调整实时变化。</div>
+</div>
   </div>
 </div>
 <div class="modal" id="prPick" style="z-index:126" hidden>
@@ -2784,8 +2856,8 @@ function makeLyricView(root, o){
   root.classList.add('lv'); root.classList.toggle('lv-stage', stage);
   root.innerHTML = stage
     ? '<div class="lv-hd"><div class="lv-ti"></div><div class="lv-clk"></div></div><div class="lv-cur"><div class="lv-in"></div><img class="lv-pi" hidden alt=""></div><div class="lv-nx"><div class="lv-nxl">下一页</div><div class="lv-nxt"></div><div class="lv-prow" hidden><img class="lv-pn" alt=""><div class="lv-nt"></div></div></div><div class="lv-flag"></div>'
-    : '<div class="lv-bg"></div><canvas class="lv-fx"></canvas><div class="lv-dim"></div><div class="lv-txt"><div class="lv-in"></div></div><div class="lv-ppt"><img alt=""></div><div class="lv-blk"></div>';
-  const q = c=>root.querySelector(c), inn = q('.lv-in');
+    : '<div class="lv-bg"></div><canvas class="lv-fx"></canvas><div class="lv-dim"></div><div class="lv-txt"><div class="lv-in"></div></div><div class="lv-ref"></div><div class="lv-ppt"><img alt=""></div><div class="lv-blk"></div>';
+  const q = c=>root.querySelector(c), inn = q('.lv-in'), refEl = q('.lv-ref');
   let last = null, key = '', textKey = null, ft = 0, tok = 0, stopFx = null, objUrl = null, pk = '';
   function cleanup(){ if (stopFx) { stopFx(); stopFx = null; } if (objUrl) { URL.revokeObjectURL(objUrl); objUrl = null; } }
   function media(bgEl, src, kind){
@@ -2816,6 +2888,7 @@ function makeLyricView(root, o){
     if (stage) return fitStage();
     if (last.ppt) return;
     lvFit(q('.lv-txt'), inn, (last.font && last.font.max || 12)/100*root.clientHeight, 10);
+    if (refEl && refEl.textContent && refEl.style.display!=='none') lvFit(refEl, refEl, ((last.bset && last.bset.refSize) || 5)/100*root.clientHeight, 10);
   }
   function applyNormal(st){
     const f = st.font || {}, isP = !!st.ppt;
@@ -2826,16 +2899,24 @@ function makeLyricView(root, o){
     inn.style.fontFamily = LV_FONTS[f.family] || LV_FONTS.sans; inn.style.color = annColor(f.color||'#ffffff');
     inn.style.fontWeight = f.bold ? '800' : '600'; inn.style.textAlign = f.align==='left' ? 'left' : 'center';
     inn.style.textShadow = f.shadow===false ? 'none' : '0 2px 14px rgba(0,0,0,.85), 0 0 3px rgba(0,0,0,.9)';
+    const bs = st.bset || {}, rp = bs.refPos || 'bottom', rf = (!isP && !st.clear && st.ref && rp!=='none') ? st.ref : '', ps = ['l','t'].includes(f.pos) ? f.pos : 'c';
+    { const tx = q('.lv-txt'); tx.style.top = ''; tx.style.bottom = '';
+      if (rf) { if (rp==='top') { if (ps!=='l') tx.style.top = '21%'; } else if (ps==='c') tx.style.bottom = '21%'; else if (ps==='l') tx.style.bottom = '17%'; } }
+    if (refEl) {
+      refEl.style.display = rf ? 'flex' : 'none'; refEl.style.height = ((bs.refSize||5)*1.7)+'%';
+      if (rp==='top') { refEl.style.top = '5%'; refEl.style.bottom = 'auto'; } else { refEl.style.bottom = ps==='l' ? '4%' : '6%'; refEl.style.top = 'auto'; }
+      refEl.style.fontFamily = inn.style.fontFamily; refEl.style.color = inn.style.color; refEl.style.fontWeight = '600'; refEl.style.textShadow = inn.style.textShadow;
+    }
     setBg(ov ? st.ppt.bg : st.bg, ov ? .12 : st.dim); q('.lv-blk').style.opacity = st.black ? 1 : 0;
     if (isP) {
       const k = st.ppt.deck+'#'+st.ppt.idx; if (k!==pk) { pk = k; const img = q('.lv-ppt img'); img.style.opacity = 0; pptUrl(st.ppt.deck, st.ppt.idx).then(u=>{ if (pk===k) { img.onload = ()=>{ img.style.opacity = 1; }; img.src = u || ''; setTimeout(()=>{ if (pk===k) img.style.opacity = 1; }, 450); } }); }
       q('.lv-ppt img').style.visibility = st.clear ? 'hidden' : '';
       return;
     }
-    const t = st.clear ? '' : (st.text||'');
-    if (t !== textKey) {
-      textKey = t; clearTimeout(ft); inn.style.opacity = 0;
-      ft = setTimeout(()=>{ inn.textContent = t; refit(); inn.style.opacity = 1; }, t ? 140 : 0);
+    const t = st.clear ? '' : (st.text||''), tkey = t+'\u0001'+rf;
+    if (tkey !== textKey) {
+      textKey = tkey; clearTimeout(ft); inn.style.opacity = 0; if (refEl) refEl.style.opacity = 0;
+      ft = setTimeout(()=>{ inn.textContent = t; if (refEl) refEl.textContent = rf; refit(); inn.style.opacity = 1; if (refEl) refEl.style.opacity = 1; }, t ? 140 : 0);
     } else refit();
   }
   let clk = 0;
@@ -2893,16 +2974,24 @@ async function presShDelete(){
   pres.si = Math.max(0, pres.si-1); presSave(); presPush();
 }
 const PRES_DEF = { bg:{ type:'grad', id:'ocean', fx:true }, dim:.25, linesPer:2, font:{ family:'sans', max:12, color:'#ffffff', bold:true, shadow:true, align:'center', pos:'c' } };
-const pres = { mode:'lyric', si:0, _ks:-1, stageSet:Object.assign({}, ST_DEF), stageView:null, list:[], sel:0, slides:[], cur:-1, black:false, clear:false, out:false, stage:null, view:null, tab:'list', bg:PRES_DEF.bg, dim:PRES_DEF.dim, linesPer:PRES_DEF.linesPer, font:Object.assign({}, PRES_DEF.font) };
+const pres = { mode:'lyric', bibleSet:{ per:1, nums:true, refPos:'bottom', refSize:5 }, si:0, _ks:-1, stageSet:Object.assign({}, ST_DEF), stageView:null, list:[], sel:0, slides:[], cur:-1, black:false, clear:false, out:false, stage:null, view:null, tab:'list', bg:PRES_DEF.bg, dim:PRES_DEF.dim, linesPer:PRES_DEF.linesPer, font:Object.assign({}, PRES_DEF.font) };
 try {
-  const s = JSON.parse(localStorage.getItem('hymnPresSet')||'null'); if (s) { if (s.bg) pres.bg = s.bg; if (typeof s.dim==='number') pres.dim = s.dim; if (s.linesPer!=null) pres.linesPer = +s.linesPer; if (s.font) Object.assign(pres.font, s.font); if (s.stage) Object.assign(pres.stageSet, s.stage); }
-  const l = JSON.parse(localStorage.getItem('hymnSetlist')||'[]'); if (Array.isArray(l)) pres.list = l.filter(x=>x && x.title && (x.text || x.type==='ppt'));
+  const s = JSON.parse(localStorage.getItem('hymnPresSet')||'null'); if (s) { if (s.bg) pres.bg = s.bg; if (typeof s.dim==='number') pres.dim = s.dim; if (s.linesPer!=null) pres.linesPer = +s.linesPer; if (s.font) Object.assign(pres.font, s.font); if (s.bible) Object.assign(pres.bibleSet, s.bible); if (s.stage) Object.assign(pres.stageSet, s.stage); }
+  const l = JSON.parse(localStorage.getItem('hymnSetlist')||'[]'); if (Array.isArray(l)) pres.list = l.filter(x=>x && x.title && (x.text || x.type==='ppt' || x.type==='bible'));
 } catch {}
-function presSave(){ try{ localStorage.setItem('hymnPresSet', JSON.stringify({ bg:pres.bg, dim:pres.dim, linesPer:pres.linesPer, font:pres.font, stage:pres.stageSet })); localStorage.setItem('hymnSetlist', JSON.stringify(pres.list)); localStorage.setItem('hymnLibs', JSON.stringify(pres.libs)); localStorage.setItem('hymnLibSel', pres.libSel||''); }catch{} }
+function presSave(){ try{ localStorage.setItem('hymnPresSet', JSON.stringify({ bg:pres.bg, dim:pres.dim, linesPer:pres.linesPer, font:pres.font, stage:pres.stageSet, bible:pres.bibleSet })); localStorage.setItem('hymnSetlist', JSON.stringify(pres.list)); localStorage.setItem('hymnLibs', JSON.stringify(pres.libs)); localStorage.setItem('hymnLibSel', pres.libSel||''); }catch{} }
 pres.libs = []; pres.libSel = ''; pres.target = null;
 try { const l = JSON.parse(localStorage.getItem('hymnLibs')||'[]'); if (Array.isArray(l)) pres.libs = l.filter(x=>x && x.id && Array.isArray(x.items)); pres.libSel = localStorage.getItem('hymnLibSel')||''; } catch {}
 function presMakeSlides(item){
   if (!item) return [];
+  if (item.type==='bible') {
+    const vs = item.verses || [], bs = pres.bibleSet, per = bs.per>0 ? bs.per : (vs.length||1), out = [];
+    for (let i=0; i<vs.length; i+=per) {
+      const g = vs.slice(i, i+per), a = g[0].n, b = g[g.length-1].n, nums = bs.nums && g.length>1, rng = a+(b!==a ? '-'+b : '');
+      out.push({ label:rng, text:g.map(v=>(nums ? v.n+' ' : '')+v.t).join(nums ? '\n' : ''), ref:item.bookName+' '+item.ch+':'+rng });
+    }
+    return out;
+  }
   if (item.type==='ppt') return (item.texts||[]).map((t,i)=>({ label:'P'+(i+1), text:t||'', ppt:{ deck:item.deckId, idx:i } }));
   const { secs } = arrParse(item.text), ord = String(item.order||'').trim();
   const seq = ord ? arrSeq(ord, secs).list : secs, out = [];
@@ -2918,6 +3007,7 @@ function presState(){
   if (s) { const n = pres.slides[pres.cur+1]; next = n ? n.text : (pres.list[pres.sel+1] ? '▶ 下一首：'+pres.list[pres.sel+1].title : '（歌单结束）'); }
   const st = { mode:'lyric', text:s?s.text:'', label:s?s.label:'', title:it?it.title:'', next, black:pres.black, clear:pres.clear,
     bg:presEffBg(), dim:pres.dim, font:pres.font, stage:pres.stageSet, pos:s?`${pres.cur+1}/${pres.slides.length}`:'' };
+  if (s && s.ref) { st.ref = s.ref; st.bset = pres.bibleSet; }
   if (s && s.ppt) { const n = pres.slides[pres.cur+1]; st.ppt = { deck:s.ppt.deck, idx:s.ppt.idx, next:n && n.ppt ? n.ppt.idx : -1, notes:(it.notes||[])[s.ppt.idx]||'', bg:(it.bgs||[])[s.ppt.idx]||null }; st.text = ''; }
   return st;
 }
@@ -2973,8 +3063,8 @@ function presRender(){
   const it = pres.list[pres.sel];
   $('prSet').innerHTML = pres.list.length ? pres.list.map((x,i)=>`<div class="pr-item${i===pres.sel?' on':''}" data-i="${i}">
       <span class="tt" data-act="sel">${i+1}. ${annEsc(x.title)}</span>
-      ${x.type==='ppt' ? `<span class="hint" style="color:#8ea0bd">PPT · ${x.count} 页</span>` : `<input data-act="ord" value="${annEsc(x.order||'')}" placeholder="ABAB" autocapitalize="characters" autocomplete="off" spellcheck="false">`}
-      <button type="button" data-act="up">↑</button>${x.type==='ppt' ? '' : '<button type="button" data-act="edit">✎ 分段</button>'}<button type="button" data-act="tolib">存库</button><button type="button" data-act="del" class="danger">✕</button></div>`).join('')
+      ${x.type==='ppt' ? `<span class="hint" style="color:#8ea0bd">PPT · ${x.count} 页</span>` : x.type==='bible' ? `<span class="hint" style="color:#8ea0bd">圣经 · ${(x.verses||[]).length} 节</span>` : `<input data-act="ord" value="${annEsc(x.order||'')}" placeholder="ABAB" autocapitalize="characters" autocomplete="off" spellcheck="false">`}
+      <button type="button" data-act="up">↑</button>${x.type==='ppt' || x.type==='bible' ? '' : '<button type="button" data-act="edit">✎ 分段</button>'}<button type="button" data-act="tolib">存库</button><button type="button" data-act="del" class="danger">✕</button></div>`).join('')
     : '<div class="hint" style="color:#8ea0bd">歌单还是空的。</div>';
   if (it) presRenderSlides(); else $('prSlides').innerHTML = '<div class="hint" style="color:#8ea0bd">先添加歌曲。</div>';
   const on = $('prSlides').querySelector('.pr-card.on'); if (on) on.scrollIntoView({ block:'nearest' });
@@ -2982,6 +3072,7 @@ function presRender(){
 function presMkItem(it){
   return Object.assign({ id:String(Date.now())+Math.random().toString(36).slice(2,5), title:it.title||'未命名', text:it.text||'', order:it.order||'' },
     it.type==='ppt' ? { type:'ppt', deckId:it.deckId, count:it.count, texts:it.texts, notes:it.notes, bgs:it.bgs } : {},
+    it.type==='bible' ? { type:'bible', bookName:it.bookName, ch:it.ch, verses:it.verses } : {},
     it.sheets && it.sheets.length ? { sheets:it.sheets } : {});
 }
 function presAddItem(it){
@@ -2990,25 +3081,28 @@ function presAddItem(it){
   pres.sel = pres.list.length-1; pres.cur = -1; presRegen(); presSave(); if (!$('pres').hidden) { presRender(); presPush(); }
 }
 function presOpen(){
+  prMenu('');
   $('pres').hidden = false; document.body.style.overflow = 'hidden';
   if (!pres.view) pres.view = makeLyricView($('prPrev'));
   if (!pres.slides.length) presRegen();
   presSyncForm(); stFill(); presTab(pres.list.length ? (pres.slides.length ? 'slides' : 'list') : 'list'); presRender(); presPush(); presBgRender();
 }
-const PR_GRP = { list:'L', libs:'L', style:'R', screens:'R', stage:'R', slides:'C', bg:'B' };
+const PR_GRP = { list:'L', libs:'L', bible:'L', style:'R', screens:'R', stage:'R', slides:'C', bg:'B' };
 pres.act = { L:'list', R:'style' };
 const prDesk = ()=>window.matchMedia('(min-width:900px)').matches;
-const prStageVisible = ()=>prDesk() ? pres.act.R==='stage' : pres.tab==='stage';
+const prStageVisible = ()=>pres.menu==='stage' && !$('prPop').hidden;
 function presTab(t){
+  if (t==='style' || t==='screens' || t==='stage') { prMenu(t); return; }   // 这三项现在是顶部菜单里的下拉面板
   if (pres.target && t==='slides') t = 'libs';
   if (t!=='libs') pres.target = null;
   pres.tab = t; const g = PR_GRP[t]; if (g==='L' || g==='R') pres.act[g] = t;
   { const lt = (pres.act.L==='libs' || t==='libs') ? 'libs' : 'list', m = $('prPptMsg'), pn = document.querySelector('.pr-pane[data-pane="'+lt+'"]'); if (m && pn && m.parentNode!==pn) pn.appendChild(m); }
   if (pres.act.L==='libs' || t==='libs') libRender();
+  if (t==='bible') bibleInit();
   const desk = prDesk();
   if (prStageVisible()) { if (!pres.stageView) pres.stageView = makeLyricView($('prStagePrev'), { stage:true }); setTimeout(()=>pres.stageView.apply(presState()), 30); }
   document.querySelectorAll('.pr-tabs button[data-p]').forEach(b=>{ const n = b.dataset.p, gg = PR_GRP[n]; b.classList.toggle('on', desk ? (gg==='L'||gg==='R' ? pres.act[gg]===n : false) : n===t); });
-  document.querySelectorAll('.pr-pane').forEach(p=>{ const n = p.dataset.pane, gg = PR_GRP[n]; p.hidden = desk ? ((gg==='L'||gg==='R') ? pres.act[gg]!==n : false) : n!==t; });
+  document.querySelectorAll('.pr-pane').forEach(p=>{ if (p.dataset.menu!==undefined) return; const n = p.dataset.pane, gg = PR_GRP[n]; p.hidden = desk ? ((gg==='L'||gg==='R') ? pres.act[gg]!==n : false) : n!==t; });
   if (t==='bg') presBgRender();
 }
 window.addEventListener('resize', ()=>{ if (!$('pres').hidden) presTab(pres.tab||'list'); });
@@ -3146,7 +3240,7 @@ function presRenderSlides(){
   $('prSlTitle').textContent = it ? '  ·  '+it.title : '';
   let html = '', last = null;
   if (it && pres.slides.length) pres.slides.forEach((s,i)=>{
-    if (!s.ppt && s.label!==last) { html += `<div class="pr-gh" style="--c:${presHue(s.label,it)}">${annEsc(s.label)}</div>`; last = s.label; }
+    if (!s.ppt && !s.ref && s.label!==last) { html += `<div class="pr-gh" style="--c:${presHue(s.label,it)}">${annEsc(s.label)}</div>`; last = s.label; }
     html += presCard(s,i,it);
   });
   $('prSlides').innerHTML = html || '<div class="hint" style="color:#8ea0bd">这首歌没有可显示的段落：请检查分段标记和演唱顺序。</div>';
@@ -3193,8 +3287,8 @@ function libRender(){
   $('libInfo').textContent = '「'+lib.name+'」共 '+lib.items.length+' 项';
   $('libItems').innerHTML = lib.items.length ? lib.items.map((x,i)=>`<div class="pr-item" data-i="${i}">
       <span class="tt">${annEsc(x.title)}</span>
-      ${x.type==='ppt' ? `<span class="hint" style="color:#8ea0bd">PPT · ${x.count} 页</span>` : `<input data-act="ord" value="${annEsc(x.order||'')}" placeholder="ABAB" autocapitalize="characters" autocomplete="off" spellcheck="false">`}
-      <button type="button" data-act="add">＋歌单</button><button type="button" data-act="go" class="pri">▶ 放映</button><button type="button" data-act="up">↑</button>${x.type==='ppt' ? '' : '<button type="button" data-act="edit">✎ 分段</button>'}<button type="button" data-act="del" class="danger">✕</button></div>`).join('')
+      ${x.type==='ppt' ? `<span class="hint" style="color:#8ea0bd">PPT · ${x.count} 页</span>` : x.type==='bible' ? `<span class="hint" style="color:#8ea0bd">圣经 · ${(x.verses||[]).length} 节</span>` : `<input data-act="ord" value="${annEsc(x.order||'')}" placeholder="ABAB" autocapitalize="characters" autocomplete="off" spellcheck="false">`}
+      <button type="button" data-act="add">＋歌单</button><button type="button" data-act="go" class="pri">▶ 放映</button><button type="button" data-act="up">↑</button>${x.type==='ppt' || x.type==='bible' ? '' : '<button type="button" data-act="edit">✎ 分段</button>'}<button type="button" data-act="del" class="danger">✕</button></div>`).join('')
     : '<div class="hint" style="color:#8ea0bd">这个库还是空的：用下方按钮添加，或在歌单里点「存库」。</div>';
 }
 async function libToSetlist(item, open){
@@ -3231,6 +3325,191 @@ $('libItems').addEventListener('click', e=>{
   else if (act==='edit') arrOpen(null, { custom:true, title:it.title, text:it.text, order:it.order, applyLabel:'应用到库', onApply:(text,order)=>{ it.text = text; it.order = order; presSave(); libRender(); } });
 });
 $('libItems').addEventListener('input', e=>{ if (e.target.dataset.act!=='ord') return; const i = +e.target.closest('.pr-item').dataset.i; libCur().items[i].order = e.target.value.trim(); presSave(); });
+
+/* ============== 圣经投屏（VPL 格式：每行「GEN 1:1 起初，　神创造天地。」） ============== */
+const BIBLE_FILE = 'cmn-cu89s_vpl.txt', BIBLE_KEY = 'bible:main';
+const BK_INFO = [
+  ['GEN','创世记','创'],['EXO','出埃及记','出'],['LEV','利未记','利'],['NUM','民数记','民'],['DEU','申命记','申'],['JOS','约书亚记','书'],['JDG','士师记','士'],['RUT','路得记','得'],
+  ['1SA','撒母耳记上','撒上'],['2SA','撒母耳记下','撒下'],['1KI','列王纪上','王上'],['2KI','列王纪下','王下'],['1CH','历代志上','代上'],['2CH','历代志下','代下'],
+  ['EZR','以斯拉记','拉'],['NEH','尼希米记','尼'],['EST','以斯帖记','斯'],['JOB','约伯记','伯'],['PSA','诗篇','诗'],['PRO','箴言','箴'],['ECC','传道书','传'],['SNG','雅歌','歌'],
+  ['ISA','以赛亚书','赛'],['JER','耶利米书','耶'],['LAM','耶利米哀歌','哀'],['EZK','以西结书','结'],['DAN','但以理书','但'],['HOS','何西阿书','何'],['JOL','约珥书','珥'],['AMO','阿摩司书','摩'],
+  ['OBA','俄巴底亚书','俄'],['JON','约拿书','拿'],['MIC','弥迦书','弥'],['NAM','那鸿书','鸿'],['HAB','哈巴谷书','哈'],['ZEP','西番雅书','番'],['HAG','哈该书','该'],['ZEC','撒迦利亚书','亚'],['MAL','玛拉基书','玛'],
+  ['MAT','马太福音','太'],['MRK','马可福音','可'],['LUK','路加福音','路'],['JHN','约翰福音','约'],['ACT','使徒行传','徒'],['ROM','罗马书','罗'],['1CO','哥林多前书','林前'],['2CO','哥林多后书','林后'],
+  ['GAL','加拉太书','加'],['EPH','以弗所书','弗'],['PHP','腓立比书','腓'],['COL','歌罗西书','西'],['1TH','帖撒罗尼迦前书','帖前'],['2TH','帖撒罗尼迦后书','帖后'],['1TI','提摩太前书','提前'],['2TI','提摩太后书','提后'],
+  ['TIT','提多书','多'],['PHM','腓利门书','门'],['HEB','希伯来书','来'],['JAS','雅各书','雅'],['1PE','彼得前书','彼前'],['2PE','彼得后书','彼后'],['1JN','约翰一书','约一'],['2JN','约翰二书','约二'],['3JN','约翰三书','约三'],
+  ['JUD','犹大书','犹'],['REV','启示录','启']
+];
+const BK_BY = new Map(BK_INFO.map(x=>[x[0], x]));
+const BK_ALIAS = { EZE:'EZK', JOE:'JOL', NAH:'NAM', SOS:'SNG', PHI:'PHP', JAM:'JAS', MRC:'MRK' };
+const BIBLE_STRIP_SP = true;      // 去掉经文里的全角空格（如「，　神」里神字前的那个）
+const bible = { data:null, loading:null, code:'GEN', ch:1, v1:0, v2:0, anc:0 };
+const bbMsg = (t, bad)=>{ const el = $('bbMsg'); el.textContent = t; el.classList.toggle('bb-err', !!bad); };
+
+function bibleParse(text){
+  const books = [], by = new Map(), flat = []; let n = 0;
+  for (const line of String(text).split(/\r?\n/)) {
+    const m = line.match(/^﻿?([1-3A-Za-z][A-Za-z0-9]{2})\s+(\d+):(\d+)(?:[-–]\d+)?\s+(.+)$/); if (!m) continue;
+    let code = m[1].toUpperCase(); code = BK_ALIAS[code] || code;
+    let bk = by.get(code);
+    if (!bk) { const info = BK_BY.get(code); bk = { code, name:info ? info[1] : code, abbr:info ? info[2] : code, chs:new Map() }; by.set(code, bk); books.push(bk); }
+    const ch = +m[2], v = +m[3]; let arr = bk.chs.get(ch); if (!arr) { arr = []; bk.chs.set(ch, arr); }
+    let t = m[4].replace(/\s+$/, ''); if (BIBLE_STRIP_SP) t = t.replace(/　/g, '');
+    arr.push({ n:v, t }); flat.push({ bk, ch, n:v, t }); n++;
+  }
+  if (n < 100) throw new Error('这个文件不像 VPL 圣经（每行应是「GEN 1:1 经文」的格式）');
+  return { books, by, flat, count:n };
+}
+const bibleBook = ()=>bible.data && bible.data.by.get(bible.code);
+function bibleAccept(text, from){
+  const d = bibleParse(text); bible.data = d;
+  if (!d.by.get(bible.code)) bible.code = d.books[0].code;
+  bibleFillBooks();
+  bbMsg(`圣经已加载：${d.books.length} 卷、${d.count} 节（${from}）。`);
+}
+async function bibleInit(){
+  bibleSyncForm();
+  if (bible.data) return;
+  if (bible.loading) return bible.loading;
+  bbMsg('正在读取圣经…');
+  bible.loading = (async ()=>{
+    try {   // 1) 和页面同一个文件夹里的圣经文件（用网址访问时）
+      const r = await fetch(BIBLE_FILE, { cache:'no-cache' });
+      if (r.ok) { const text = await r.text(); bibleAccept(text, '同目录 '+BIBLE_FILE); sheetdb.put({ id:BIBLE_KEY, name:BIBLE_FILE, blob:new Blob([text]) }).catch(()=>{}); return; }
+    } catch {}
+    try {   // 2) 以前加载过的本机缓存（断网 / 直接打开文件时也能用）
+      const rec = await sheetdb.get(BIBLE_KEY);
+      if (rec && rec.blob) { bibleAccept(await rec.blob.text(), '本机缓存：'+(rec.name||'')); return; }
+    } catch {}
+    bbMsg('没有找到 '+BIBLE_FILE+'：请把它放在和本页面同一个文件夹里（用网址访问），或点下面「选择圣经文件」，选一次以后会自动记住。', true);
+  })().finally(()=>{ bible.loading = null; });
+  return bible.loading;
+}
+$('bbPick').addEventListener('click', ()=>$('bbFile').click());
+$('bbFile').addEventListener('change', async e=>{
+  const f = e.target.files[0]; e.target.value = ''; if (!f) return;
+  try { const text = await f.text(); bibleAccept(text, '你选择的文件 '+f.name); await sheetdb.put({ id:BIBLE_KEY, name:f.name, blob:f }); }
+  catch (err) { bbMsg('读取失败：'+(err.message||err), true); }
+});
+
+function bibleFillBooks(){
+  const d = bible.data; if (!d) return;
+  $('bbBook').innerHTML = d.books.map(b=>`<option value="${annEsc(b.code)}">${annEsc(b.name)}</option>`).join('');
+  $('bbBook').value = bible.code; bibleFillCh();
+}
+function bibleFillCh(){
+  const bk = bibleBook(); if (!bk) return;
+  const chs = [...bk.chs.keys()].sort((a,b)=>a-b); if (!bk.chs.has(bible.ch)) bible.ch = chs[0];
+  $('bbCh').innerHTML = chs.map(c=>`<option value="${c}">第 ${c} ${bk.code==='PSA' ? '篇' : '章'}</option>`).join('');
+  $('bbCh').value = String(bible.ch); bibleFillVerses();
+}
+function bibleFillVerses(){
+  const box = $('bbList'), q = $('bbQ').value.trim();
+  if (!bible.data) { box.innerHTML = ''; return; }
+  if (q) return bibleSearchRender(q);
+  const bk = bibleBook(), vs = (bk && bk.chs.get(bible.ch)) || [];
+  box.innerHTML = vs.map(v=>`<div class="bb-v${bible.v1 && v.n>=bible.v1 && v.n<=bible.v2 ? ' on' : ''}" data-n="${v.n}"><b>${v.n}</b><span>${annEsc(v.t)}</span></div>`).join('');
+  const on = box.querySelector('.on'); if (on) on.scrollIntoView({ block:'nearest' });
+}
+function bibleSearchRender(q){
+  const box = $('bbList'), ws = q.toLowerCase().split(/\s+/).filter(Boolean), out = []; let more = false;
+  for (const r of bible.data.flat) {
+    const lo = r.t.toLowerCase();
+    if (ws.every(w=>lo.includes(w))) { if (out.length >= 150) { more = true; break; } out.push(r); }
+  }
+  const re = new RegExp('('+ws.map(w=>w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')+')', 'gi');
+  const hl = t=>t.split(re).map((p,i)=>i%2 ? '<mark>'+annEsc(p)+'</mark>' : annEsc(p)).join('');
+  box.innerHTML = out.length
+    ? out.map(r=>`<div class="bb-v s" data-code="${annEsc(r.bk.code)}" data-ch="${r.ch}" data-n="${r.n}"><b>${annEsc(r.bk.abbr)}${r.ch}:${r.n}</b><span>${hl(r.t)}</span></div>`).join('') + (more ? '<div class="hint" style="padding:8px 10px;color:#8ea0bd">只显示前 150 条，请加更多关键词缩小范围。</div>' : '')
+    : '<div class="hint" style="padding:10px;color:#8ea0bd">没有找到包含这些词的经文。</div>';
+}
+
+/* 书卷名 / 简称 / 代码 → 书卷；写法有歧义（如「撒」）时返回 null */
+function bibleFindBook(tok){
+  const d = bible.data; if (!d) return null;
+  tok = String(tok).replace(/[\s《》]/g, '').toUpperCase(); if (!tok) return null;
+  const up = s=>String(s).toUpperCase();
+  let b = d.books.find(x=>up(x.code)===tok || up(x.abbr)===tok || up(x.name)===tok); if (b) return b;
+  const al = BK_ALIAS[tok]; if (al && d.by.get(al)) return d.by.get(al);
+  const pre = d.books.filter(x=>up(x.name).startsWith(tok) || up(x.abbr).startsWith(tok)); if (pre.length===1) return pre[0];
+  if (pre.length > 1) return null;
+  const inc = d.books.filter(x=>x.name.includes(tok)); return inc.length===1 ? inc[0] : null;
+}
+function bibleParseRef(raw){
+  const s = String(raw).trim().replace(/[：．.。]/g, ':').replace(/章/g, ':').replace(/节/g, '').replace(/[–—~～至到]/g, '-').replace(/\s+/g, ' ').replace(/:\s*$/, '');
+  const m = s.match(/^(.*?[^\d\s:-])\s*(\d+)(?:\s*:\s*(\d+)(?:\s*-\s*(\d+))?)?\s*$/);
+  if (!m) return { err:'看不懂这个写法，试试「约3:16」「创1:1-5」「诗23」。' };
+  const bk = bibleFindBook(m[1]); if (!bk) return { err:'找不到书卷「'+m[1].trim()+'」（写法有歧义的话，请写全一点）。' };
+  let ch = +m[2], v1 = m[3]!=null ? +m[3] : 0, v2 = m[4]!=null ? +m[4] : v1;
+  if (bk.chs.size===1 && m[3]==null) { v1 = v2 = ch; ch = [...bk.chs.keys()][0]; }   // 犹大书 3 = 第 3 节
+  const vs = bk.chs.get(ch); if (!vs) return { err:bk.name+'没有第 '+ch+' 章。' };
+  if (v1) {
+    const mx = Math.max(...vs.map(v=>v.n));
+    if (v2 < v1) v2 = v1; if (v1 > mx) return { err:`${bk.name}第 ${ch} 章只有 ${mx} 节。` }; if (v2 > mx) v2 = mx;
+  }
+  return { bk, ch, v1, v2 };
+}
+
+/* 把一段经文做成歌单里的一项，需要时立刻投出第一页 */
+function bibleSelPassage(){
+  const bk = bibleBook(); if (!bk) return null;
+  const vs = bk.chs.get(bible.ch) || [], a = bible.v1 || 0, b = bible.v2 || 0;
+  const sel = a ? vs.filter(v=>v.n>=a && v.n<=b) : vs;
+  return sel.length ? { bk, ch:bible.ch, sel, whole:!a } : null;
+}
+function bibleAdd(p, live){
+  const { bk, ch, sel } = p, a = sel[0].n, b = sel[sel.length-1].n;
+  const title = bk.name+' '+ch+(p.whole ? '' : ':'+a+(b!==a ? '-'+b : ''));
+  pres.target = null; pres.mode = 'lyric';
+  presAddItem({ type:'bible', title, bookName:bk.name, ch, verses:sel.map(v=>({ n:v.n, t:v.t })), text:'', order:'' });
+  if (live) presGo(0);
+  const out = pres.out && castActive();
+  bbMsg((live ? (out ? '已投出：' : '已选中第一页：') : '已加入歌单：')+title+(live && !out ? '（点上方「开始输出」后，观众屏才会显示）' : '')+'。');
+}
+function bibleGoRef(){
+  const q = $('bbRef').value.trim(); if (!q) return;
+  if (!bible.data) { bbMsg('圣经还没加载。', true); return; }
+  const r = bibleParseRef(q); if (r.err) { bbMsg(r.err, true); return; }
+  bible.code = r.bk.code; bible.ch = r.ch; bible.v1 = r.v1; bible.v2 = r.v2; bible.anc = r.v1; $('bbQ').value = '';
+  bibleFillBooks();
+  const p = bibleSelPassage(); if (p) bibleAdd(p, true);
+  $('bbRef').select();
+}
+function bibleDoSel(live){
+  if (!bible.data) { bbMsg('圣经还没加载。', true); return; }
+  if ($('bbQ').value.trim() && !bible.v1) { bbMsg('先点一条搜索结果，或清空搜索框。', true); return; }
+  const p = bibleSelPassage(); if (p) bibleAdd(p, live);
+}
+$('bbGo').addEventListener('click', bibleGoRef);
+$('bbRef').addEventListener('keydown', e=>{ if (e.key==='Enter') { e.preventDefault(); bibleGoRef(); } });
+$('bbAdd').addEventListener('click', ()=>bibleDoSel(false));
+$('bbLive').addEventListener('click', ()=>bibleDoSel(true));
+$('bbBook').addEventListener('change', ()=>{ bible.code = $('bbBook').value; bible.ch = 1; bible.v1 = bible.v2 = bible.anc = 0; bibleFillCh(); });
+$('bbCh').addEventListener('change', ()=>{ bible.ch = +$('bbCh').value; bible.v1 = bible.v2 = bible.anc = 0; bibleFillVerses(); });
+let bbT = 0;
+$('bbQ').addEventListener('input', ()=>{ clearTimeout(bbT); bbT = setTimeout(bibleFillVerses, 180); });
+$('bbList').addEventListener('click', e=>{
+  const d = e.target.closest('.bb-v'); if (!d || !d.dataset.n) return;
+  if (d.dataset.code) {   // 搜索结果：跳到那一节
+    bible.code = d.dataset.code; bible.ch = +d.dataset.ch; bible.v1 = bible.v2 = bible.anc = +d.dataset.n; $('bbQ').value = ''; bibleFillBooks(); return;
+  }
+  const n = +d.dataset.n;
+  if ((e.shiftKey || e.ctrlKey || e.metaKey) && bible.anc) { bible.v1 = Math.min(bible.anc, n); bible.v2 = Math.max(bible.anc, n); }
+  else { bible.anc = n; bible.v1 = bible.v2 = n; }
+  $('bbList').querySelectorAll('.bb-v').forEach(x=>x.classList.toggle('on', +x.dataset.n>=bible.v1 && +x.dataset.n<=bible.v2));
+});
+$('bbList').addEventListener('dblclick', e=>{ const d = e.target.closest('.bb-v'); if (d && d.dataset.n && !d.dataset.code) bibleDoSel(true); });
+
+/* 显示设置 */
+function bibleSyncForm(){ const b = pres.bibleSet; $('bbPer').value = String(b.per); $('bbNums').checked = !!b.nums; $('bbRefPos').value = b.refPos; $('bbRefSize').value = b.refSize; }
+function bibleSetChanged(regen){
+  const b = pres.bibleSet; b.per = +$('bbPer').value; b.nums = $('bbNums').checked; b.refPos = $('bbRefPos').value; b.refSize = +$('bbRefSize').value;
+  presSave();
+  if (regen) { const was = pres.cur; presRegen(); pres.cur = Math.min(was, pres.slides.length-1); presRender(); }
+  presPush();
+}
+['bbPer','bbNums'].forEach(id=>$(id).addEventListener('input', ()=>bibleSetChanged(true)));
+['bbRefPos','bbRefSize'].forEach(id=>$(id).addEventListener('input', ()=>bibleSetChanged(false)));
+bibleSyncForm();
 
 /* ---- 输出 / 舞台屏 / 按钮 ---- */
 $('presOpenBtn').addEventListener('click', presOpen);
@@ -3275,6 +3554,40 @@ async function presOpenStage(){
     }catch{}
   }
 }
+/* ---- 顶部菜单：文字样式 / 输出屏幕 / 舞台屏设置（下拉面板，点面板外或按 Esc 收起） ---- */
+const PR_MENU_TT = { style:'文字样式（观众屏）', screens:'输出屏幕', stage:'舞台屏设置（敬拜团队看的屏）' };
+const PR_UNIT = { prSize:'%', stSplit:'%', stLh:'%' };
+function prPopVals(){
+  $('prPop').querySelectorAll('input[type=range]').forEach(r=>{
+    const lab = r.previousElementSibling; if (!lab || lab.tagName!=='LABEL') return;
+    let v = lab.querySelector('.pr-val'); if (!v) { v = document.createElement('b'); v.className = 'pr-val'; lab.appendChild(v); }
+    v.textContent = r.value + (PR_UNIT[r.id]||'');
+  });
+}
+function prMenuPlace(btn){
+  const pop = $('prPop'), host = $('pres').getBoundingClientRect(), tb = $('pres').querySelector('.pr-top').getBoundingClientRect(), b = btn.getBoundingClientRect();
+  const w = pop.offsetWidth, top = tb.bottom - host.top + 4;
+  pop.style.left = Math.max(8, Math.min(b.left - host.left, host.width - w - 8)) + 'px';
+  pop.style.top = top + 'px';
+  pop.style.maxHeight = Math.max(240, host.height - top - 12) + 'px';
+}
+function prMenu(name){
+  const pop = $('prPop'); pres.menu = name || '';
+  document.querySelectorAll('#prMenus button').forEach(b=>b.classList.toggle('on', b.dataset.m===name));
+  if (!name) { pop.hidden = true; return; }
+  pop.hidden = false; pop.classList.toggle('wide', name==='stage');
+  $('prPopT').textContent = PR_MENU_TT[name];
+  pop.querySelectorAll('.pr-pane').forEach(p=>{ p.hidden = p.dataset.pane!==name; });
+  prPopVals(); prMenuPlace(document.querySelector('#prMenus button[data-m="'+name+'"]'));
+  if (name==='stage') { if (!pres.stageView) pres.stageView = makeLyricView($('prStagePrev'), { stage:true }); setTimeout(()=>pres.stageView.apply(presState()), 30); }
+}
+document.querySelectorAll('#prMenus button').forEach(b=>b.addEventListener('click', ()=>prMenu(pres.menu===b.dataset.m ? '' : b.dataset.m)));
+$('prPopX').addEventListener('click', ()=>prMenu(''));
+$('prPop').addEventListener('input', prPopVals);
+$('prClose').addEventListener('click', ()=>prMenu(''));
+document.addEventListener('pointerdown', e=>{ if (pres.menu && !(e.target.closest && e.target.closest('#prPop, #prMenus'))) prMenu(''); }, true);
+document.addEventListener('keydown', e=>{ if (e.key==='Escape' && pres.menu && !$('pres').hidden) { e.preventDefault(); e.stopPropagation(); prMenu(''); } }, true);
+window.addEventListener('resize', ()=>{ if (pres.menu) prMenu(pres.menu); });
 $('prStage').addEventListener('click', presOpenStage);
 $('prScrGo').addEventListener('click', async ()=>{
   if (!cast.det) await castDetect();
